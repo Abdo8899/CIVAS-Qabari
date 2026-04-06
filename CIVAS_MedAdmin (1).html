@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>CIVAS-Qabari – IV Medication Protocol</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #060b14;
+    --surface: #0d1626;
+    --surface2: #121d30;
+    --border: #1e2d45;
+    --border2: #243450;
+    --text: #e8edf5;
+    --text2: #7a8fa8;
+    --text3: #4a5f78;
+    --sky: #38bdf8;
+    --sky-dark: #0ea5e9;
+    --sky-bg: rgba(14,165,233,0.08);
+    --rose: #fb7185;
+    --rose-bg: rgba(251,113,133,0.08);
+    --amber: #fbbf24;
+    --amber-bg: rgba(251,191,36,0.08);
+    --emerald: #34d399;
+    --violet: #a78bfa;
+    --teal: #2dd4bf;
+    --cyan: #22d3ee;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* HEADER */
+  header {
+    position: sticky; top: 0; z-index: 40;
+    background: rgba(6,11,20,0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 16px 10px;
+  }
+  .header-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .brand-icon {
+    width: 38px; height: 38px; border-radius: 12px;
+    background: linear-gradient(135deg, #0ea5e9, #7c3aed);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(14,165,233,0.3);
+  }
+  .brand-icon svg { width: 18px; height: 18px; color: #fff; }
+  .brand-title { font-size: 15px; font-weight: 700; line-height: 1; color: var(--text); letter-spacing: -0.3px; }
+  .brand-title span { color: var(--sky); }
+  .brand-sub { font-size: 10px; color: var(--text3); margin-top: 3px; }
+  .search-wrap { position: relative; flex: 1; min-width: 200px; }
+  .search-wrap svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text3); width: 15px; height: 15px; pointer-events: none; }
+  #searchInput {
+    width: 100%; padding: 9px 34px 9px 34px;
+    background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: 12px; color: var(--text); font-size: 13px;
+    font-family: inherit; outline: none; transition: border-color .2s;
+  }
+  #searchInput::placeholder { color: var(--text3); }
+  #searchInput:focus { border-color: var(--sky-dark); }
+  #clearSearch { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; display: none; color: var(--text2); padding: 2px; }
+  .add-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--sky-dark); border: none; border-radius: 12px;
+    color: #fff; font-size: 13px; font-weight: 600;
+    padding: 9px 16px; cursor: pointer; transition: background .2s;
+    font-family: inherit; white-space: nowrap;
+  }
+  .add-btn:hover { background: var(--sky); }
+  .add-btn svg { width: 15px; height: 15px; }
+  .filters { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border2);
+    background: var(--surface2); color: var(--text2); font-size: 12px;
+    font-weight: 500; cursor: pointer; transition: all .2s; font-family: inherit;
+  }
+  .filter-btn:hover { color: var(--text); border-color: var(--border); }
+  .filter-btn.active { background: var(--sky-dark); border-color: var(--sky-dark); color: #fff; box-shadow: 0 2px 12px rgba(14,165,233,0.25); }
+  .sort-wrap { margin-left: auto; display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text3); }
+  .sort-wrap svg { width: 12px; height: 12px; }
+  #sortSelect { background: transparent; border: none; color: var(--text2); font-size: 11px; cursor: pointer; font-family: inherit; outline: none; }
+
+  /* MAIN */
+  main { max-width: 1280px; margin: 0 auto; padding: 20px 16px 40px; }
+
+  /* STATS */
+  .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 20px; }
+  .stat-card {
+    border-radius: 14px; border: 1px solid var(--border);
+    padding: 12px 14px; display: flex; align-items: center; gap: 10px;
+    background: var(--surface);
+  }
+  .stat-card svg { width: 20px; height: 20px; flex-shrink: 0; }
+  .stat-val { font-size: 22px; font-weight: 700; line-height: 1; }
+  .stat-lbl { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+  /* LEGEND */
+  .legend { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text3); }
+  .legend-item svg { width: 12px; height: 12px; }
+  #resultCount { font-size: 11px; color: var(--text3); margin-bottom: 12px; }
+
+  /* GRID */
+  #drugGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px;
+  }
+
+  /* CARD */
+  .drug-card {
+    border-radius: 18px; border: 1px solid var(--border);
+    overflow: hidden; transition: transform .2s, box-shadow .2s;
+    position: relative;
+  }
+  .drug-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.4); }
+  .drug-card.chemo { background: linear-gradient(160deg, var(--surface) 60%, rgba(251,113,133,0.05)); border-color: rgba(251,113,133,0.2); }
+  .drug-card.normal { background: linear-gradient(160deg, var(--surface) 60%, rgba(56,189,248,0.05)); border-color: rgba(56,189,248,0.2); }
+
+  .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 14px 14px 10px; }
+  .card-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .card-icon svg { width: 17px; height: 17px; }
+  .chemo .card-icon { background: rgba(251,113,133,0.15); }
+  .normal .card-icon { background: rgba(56,189,248,0.12); }
+  .card-title { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; }
+  .card-badge {
+    display: inline-block; border-radius: 20px; border: 1px solid;
+    padding: 2px 8px; font-size: 9px; font-weight: 700; letter-spacing: .6px;
+    text-transform: uppercase; margin-top: 4px;
+  }
+  .chemo .card-badge { background: rgba(251,113,133,0.1); color: #fda4af; border-color: rgba(251,113,133,0.3); }
+  .normal .card-badge { background: rgba(56,189,248,0.1); color: #7dd3fc; border-color: rgba(56,189,248,0.3); }
+  .card-actions { display: flex; gap: 2px; flex-shrink: 0; }
+  .icon-btn { background: none; border: none; cursor: pointer; padding: 5px; border-radius: 8px; transition: background .15s; display: flex; align-items: center; justify-content: center; }
+  .icon-btn:hover { background: rgba(255,255,255,0.07); }
+  .icon-btn svg { width: 13px; height: 13px; }
+  .edit-btn svg { color: var(--text2); }
+  .del-btn svg { color: rgba(251,113,133,0.6); }
+
+  /* Quick info */
+  .quick-info { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 0 12px 10px; }
+  .qi-box { background: rgba(255,255,255,0.03); border-radius: 8px; padding: 7px 10px; }
+  .qi-label { font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; }
+  .qi-val { font-size: 11px; color: var(--text); font-weight: 500; margin-top: 2px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* Expand toggle */
+  .expand-btn {
+    width: 100%; background: none; border: none; border-top: 1px solid;
+    padding: 8px; cursor: pointer; font-size: 11px; font-weight: 500;
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+    transition: color .15s; font-family: inherit;
+  }
+  .chemo .expand-btn { border-color: rgba(251,113,133,0.2); color: rgba(251,113,133,0.7); }
+  .chemo .expand-btn:hover { color: #fda4af; }
+  .normal .expand-btn { border-color: rgba(56,189,248,0.2); color: rgba(56,189,248,0.7); }
+  .normal .expand-btn:hover { color: #7dd3fc; }
+  .expand-btn svg { width: 13px; height: 13px; }
+
+  /* Details */
+  .card-details { border-top: 1px solid rgba(255,255,255,0.05); padding: 12px; display: none; }
+  .card-details.open { display: block; }
+  .detail-row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .detail-icon { flex-shrink: 0; margin-top: 2px; width: 15px; height: 15px; }
+  .detail-label { font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px; }
+  .detail-val { font-size: 11px; color: var(--text); line-height: 1.5; }
+  .prec-box { border-radius: 10px; border: 1px solid rgba(251,191,36,0.2); background: rgba(251,191,36,0.05); padding: 10px; }
+  .prec-title { display: flex; align-items: center; gap: 6px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--amber); margin-bottom: 8px; }
+  .prec-title svg { width: 13px; height: 13px; }
+  .prec-list { list-style: none; }
+  .prec-list li { display: flex; align-items: flex-start; gap: 7px; font-size: 11px; color: rgba(251,191,36,0.75); line-height: 1.5; margin-bottom: 5px; }
+  .prec-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--amber); flex-shrink: 0; margin-top: 5px; }
+
+  /* EMPTY */
+  #emptyState { display: none; flex-direction: column; align-items: center; justify-content: center; padding: 80px 20px; text-align: center; }
+  #emptyState svg { width: 44px; height: 44px; color: var(--border2); margin-bottom: 12px; }
+  #emptyState p { color: var(--text2); font-size: 14px; font-weight: 500; }
+  #emptyState span { color: var(--text3); font-size: 12px; margin-top: 4px; display: block; }
+
+  /* DISCLAIMER */
+  .disclaimer { margin-top: 32px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); padding: 12px 14px; display: flex; align-items: flex-start; gap: 10px; }
+  .disclaimer svg { width: 14px; height: 14px; color: var(--text3); flex-shrink: 0; margin-top: 1px; }
+  .disclaimer p { font-size: 11px; color: var(--text3); line-height: 1.6; }
+  .disclaimer strong { color: var(--text2); }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 50;
+    background: rgba(0,0,0,0.78);
+    display: none; align-items: center; justify-content: center; padding: 16px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: 20px; width: 100%; max-width: 580px;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .modal-header {
+    position: sticky; top: 0; background: var(--surface);
+    border-bottom: 1px solid var(--border); padding: 16px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-radius: 20px 20px 0 0; z-index: 1;
+  }
+  .modal-header h2 { font-size: 15px; font-weight: 700; color: var(--text); }
+  .modal-close { background: none; border: none; cursor: pointer; padding: 4px; border-radius: 8px; color: var(--text2); transition: background .15s; }
+  .modal-close:hover { background: rgba(255,255,255,0.08); }
+  .modal-close svg { width: 18px; height: 18px; }
+  .modal-body { padding: 18px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-group { margin-bottom: 12px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label { display: block; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--text2); margin-bottom: 5px; }
+  .form-input, .form-select {
+    width: 100%; padding: 9px 12px;
+    background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: 10px; color: var(--text); font-size: 12px;
+    font-family: inherit; outline: none; transition: border-color .2s;
+  }
+  .form-input:focus, .form-select:focus { border-color: var(--sky-dark); }
+  .form-input::placeholder { color: var(--text3); }
+  .prec-row { display: flex; gap: 6px; margin-bottom: 6px; }
+  .prec-input { flex: 1; }
+  .prec-remove { background: none; border: none; cursor: pointer; padding: 6px; border-radius: 8px; color: rgba(251,113,133,0.6); transition: background .15s; }
+  .prec-remove:hover { background: rgba(251,113,133,0.1); }
+  .prec-remove svg { width: 13px; height: 13px; }
+  .add-prec-btn { display: flex; align-items: center; gap: 5px; background: none; border: none; cursor: pointer; color: var(--sky); font-size: 11px; font-family: inherit; padding: 4px 0; margin-top: 2px; transition: color .15s; }
+  .add-prec-btn:hover { color: var(--sky-dark); }
+  .add-prec-btn svg { width: 14px; height: 14px; }
+  .modal-footer {
+    position: sticky; bottom: 0; background: var(--surface);
+    border-top: 1px solid var(--border); padding: 12px 18px;
+    display: flex; justify-content: flex-end; gap: 10px;
+    border-radius: 0 0 20px 20px;
+  }
+  .btn-cancel { background: none; border: 1px solid var(--border2); border-radius: 10px; color: var(--text2); font-size: 12px; font-family: inherit; padding: 8px 16px; cursor: pointer; transition: all .15s; }
+  .btn-cancel:hover { border-color: var(--border); color: var(--text); }
+  .btn-save { display: flex; align-items: center; gap: 5px; background: var(--sky-dark); border: none; border-radius: 10px; color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; padding: 8px 18px; cursor: pointer; transition: background .15s; }
+  .btn-save:hover { background: var(--sky); }
+  .btn-save svg { width: 13px; height: 13px; }
+
+  /* MOBILE */
+  @media (max-width: 600px) {
+    .stats { grid-template-columns: repeat(3,1fr); gap: 6px; }
+    .stat-card { padding: 10px; gap: 7px; }
+    .stat-val { font-size: 18px; }
+    .stat-card svg { width: 17px; height: 17px; }
+    #drugGrid { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    .header-top { gap: 8px; }
+    .brand-title { font-size: 13px; }
+  }
+  @media (max-width: 400px) {
+    .stat-lbl { font-size: 9px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-top">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.52 16h12.96"/></svg>
+      </div>
+      <div>
+        <div class="brand-title">CIVAS-<span>Qabari</span></div>
+        <div class="brand-sub">IV Medication Administration Protocol</div>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="searchInput" placeholder="Search drugs, diluents, precautions…" oninput="handleSearch(this.value)" />
+      <button id="clearSearch" onclick="clearSearch()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <button class="add-btn" onclick="openModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      Add Drug
+    </button>
+  </div>
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)">All Drugs</button>
+    <button class="filter-btn" data-filter="chemo" onclick="setFilter('chemo',this)">Chemotherapy</button>
+    <button class="filter-btn" data-filter="normal" onclick="setFilter('normal',this)">IV (Normal)</button>
+    <div class="sort-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
+      <select id="sortSelect" onchange="renderGrid()">
+        <option value="name">Sort: A–Z</option>
+        <option value="category">Sort: Category</option>
+      </select>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+  <!-- Stats -->
+  <div class="stats" id="statsBar"></div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><svg viewBox="0 0 24 24" fill="none" stroke="#fb7185" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Chemotherapy protocol</div>
+    <div class="legend-item"><svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Standard IV protocol</div>
+    <div class="legend-item"><svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Critical precautions</div>
+  </div>
+
+  <div id="resultCount"></div>
+  <div id="drugGrid"></div>
+  <div id="emptyState">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/></svg>
+    <p>No drugs found</p>
+    <span>Try adjusting your search or filter</span>
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <p><strong>Clinical Disclaimer:</strong> This tool is for reference purposes only. Always verify preparation protocols against your institution's current formulary, manufacturer prescribing information, and applicable clinical guidelines. Data sourced from PDR.net and standard clinical references. Prepared under CIVAS-Qabari Clinical Pharmacist review.</p>
+  </div>
+</main>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">Add New Drug</h2>
+      <button class="modal-close" onclick="closeModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editId" />
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Drug Name *</label>
+          <input type="text" id="fName" class="form-input" placeholder="e.g. Vancomycin 1g" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category *</label>
+          <select id="fCategory" class="form-select">
+            <option value="normal">IV (Normal)</option>
+            <option value="chemo">Chemotherapy</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Diluent</label>
+          <input type="text" id="fDiluent" class="form-input" placeholder="e.g. NS (0.9% NaCl) or D5W" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Volume</label>
+          <input type="text" id="fVolume" class="form-input" placeholder="e.g. 100–250 mL" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Final Concentration (mg/mL)</label>
+          <input type="text" id="fFinalConc" class="form-input" placeholder="e.g. 5–10 mg/mL" />
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Stability</label>
+          <input type="text" id="fStability" class="form-input" placeholder="e.g. 24 h at room temp; 7 days refrigerated" />
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Infusion Rate</label>
+          <input type="text" id="fInfusionRate" class="form-input" placeholder="e.g. 30 min IV infusion" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Precautions</label>
+        <div id="precList"></div>
+        <button class="add-prec-btn" onclick="addPrecRow('')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          Add precaution
+        </button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveDrug()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DRUG DATABASE ──────────────────────────────────────────────────────────────
+var DRUGS = [
+  // ── CHEMOTHERAPY ─────────────────────────────────────────────────────────────
+  { id:"cyc1g", name:"Cyclophosphamide 1g", category:"chemo",
+    diluent:"NS (0.9% NaCl) or D5W", volume:"50–250 mL",
+    stability:"24 h room temp; 6 days refrigerated (2–8 °C)",
+    infusionRate:"30–60 min IV infusion", finalConc:"2–10 mg/mL",
+    precautions:["Vesicant – use central line if possible","Protect from light","Ensure adequate hydration; mesna for hemorrhagic cystitis prophylaxis","Wear PPE during preparation"] },
+  { id:"dox", name:"Doxorubicin", category:"chemo",
+    diluent:"NS (0.9% NaCl) or D5W", volume:"50–100 mL",
+    stability:"48 h room temp protected from light; 15 days refrigerated",
+    infusionRate:"3–10 min IV push or 15–60 min infusion (protocol-dependent)", finalConc:"0.4–2 mg/mL (max 2 mg/mL)",
+    precautions:["Vesicant – extravasation may cause severe tissue necrosis","Protect from light","Cumulative cardiotoxicity – monitor LVEF","Red urine discoloration expected"] },
+  { id:"iri", name:"Irinotecan", category:"chemo",
+    diluent:"D5W (preferred) or NS", volume:"250–500 mL",
+    stability:"24 h room temp; 48 h refrigerated",
+    infusionRate:"90 min IV infusion", finalConc:"0.12–2.8 mg/mL",
+    precautions:["Protect from light during infusion","Monitor for cholinergic syndrome (early diarrhea)","Late diarrhea: loperamide protocol","UGT1A1 genotyping recommended"] },
+  { id:"vin", name:"Vincristine", category:"chemo",
+    diluent:"NS (0.9% NaCl)", volume:"25–50 mL",
+    stability:"24 h room temp; 14 days refrigerated",
+    infusionRate:"5–10 min IV push or 15 min infusion", finalConc:"0.01–1 mg/mL",
+    precautions:["⚠ FATAL if given intrathecally – label conspicuously","Vesicant","Protect from light","Neurotoxicity monitoring required","Max single dose 2 mg"] },
+  { id:"dac", name:"Dacarbazine (DTIC)", category:"chemo",
+    diluent:"D5W or NS", volume:"250–500 mL",
+    stability:"8 h room temp; 72 h refrigerated – protect from light strictly",
+    infusionRate:"15–30 min IV infusion", finalConc:"1–10 mg/mL",
+    precautions:["Highly light-sensitive – wrap bag and tubing in foil","Vesicant potential","Severe nausea/vomiting: aggressive antiemetic prophylaxis","Store lyophilized vials refrigerated"] },
+  { id:"doc", name:"Docetaxel", category:"chemo",
+    diluent:"D5W or NS", volume:"250 mL",
+    stability:"4 h room temp after preparation (use immediately)",
+    infusionRate:"60 min IV infusion", finalConc:"0.3–0.74 mg/mL",
+    precautions:["Premedicate: dexamethasone 8 mg BID × 3 days starting 1 day before","Non-PVC tubing required","Hypersensitivity: have epinephrine available","Polysorbate 80-based formulation"] },
+  { id:"pac", name:"Paclitaxel", category:"chemo",
+    diluent:"NS, D5W, D5W/NS, or D5W in Ringer's lactate", volume:"250–500 mL",
+    stability:"27 h room temp (0.6–1.2 mg/mL)",
+    infusionRate:"3 h or 24 h infusion (protocol-dependent)", finalConc:"0.3–1.2 mg/mL",
+    precautions:["Non-PVC, non-DEHP tubing and containers mandatory","In-line 0.22 µm filter required","Premedicate: dexamethasone, diphenhydramine, H2-blocker","Castor oil vehicle – hypersensitivity risk"] },
+  { id:"oxa", name:"Oxaliplatin", category:"chemo",
+    diluent:"D5W ONLY (incompatible with NS or chloride-containing solutions)", volume:"250–500 mL",
+    stability:"6 h room temp; 24 h refrigerated after dilution",
+    infusionRate:"2–6 h IV infusion", finalConc:"0.2–0.6 mg/mL",
+    precautions:["NEVER dilute in NS or alkaline solutions","Avoid cold exposure during/after infusion (cold-induced neuropathy)","Do not use aluminum-containing needles","Protect from light"] },
+  { id:"carbo", name:"Carboplatin", category:"chemo",
+    diluent:"D5W or NS", volume:"250–500 mL",
+    stability:"8 h room temp after dilution",
+    infusionRate:"15–60 min IV infusion", finalConc:"0.5–2 mg/mL",
+    precautions:["Dose by AUC (Calvert formula) – renal function required","Do not use aluminum needles (precipitates)","Monitor CBC and renal function","Less nephrotoxic than cisplatin but significant myelosuppression"] },
+  { id:"cis", name:"Cisplatin", category:"chemo",
+    diluent:"NS (0.9% NaCl) – must contain NaCl", volume:"250–1000 mL (with hydration)",
+    stability:"20–72 h room temp; protect from light",
+    infusionRate:"1–8 h IV infusion; aggressive hydration pre/post", finalConc:"0.05–2 mg/mL",
+    precautions:["Nephrotoxic – pre/post-hydration mandatory (1–2 L NS)","Mannitol diuresis often required","Protect from light","Do not refrigerate (precipitates)","Monitor electrolytes, especially Mg and K"] },
+  { id:"gem", name:"Gemcitabine", category:"chemo",
+    diluent:"NS (0.9% NaCl)", volume:"50–500 mL",
+    stability:"24 h room temp; do not refrigerate (may crystallize)",
+    infusionRate:"30 min standard; fixed-dose-rate 10 mg/m²/min", finalConc:"10–40 mg/mL (max 40 mg/mL)",
+    precautions:["Do not refrigerate reconstituted solution","Infusion >60 min increases toxicity","Radiation recall – avoid concurrent radiation","Monitor CBC, LFTs, renal function"] },
+  { id:"mtx50", name:"Methotrexate 50 mg", category:"chemo",
+    diluent:"D5W or NS", volume:"25–100 mL",
+    stability:"24 h room temp; 3 months refrigerated (preservative-free)",
+    infusionRate:"15–30 min IV infusion (low-dose)", finalConc:"≤25 mg/mL",
+    precautions:["Leucovorin rescue required for high-dose regimens","Ensure adequate hydration and urine alkalinization","Monitor renal function; nephrotoxic at high doses","Folinic acid rescue timing is critical"] },
+  { id:"tras", name:"Trastuzumab (Herceptin)", category:"chemo",
+    diluent:"NS (0.9% NaCl) ONLY – do not use D5W", volume:"250 mL",
+    stability:"24 h refrigerated after dilution",
+    infusionRate:"Loading: 90 min; maintenance: 30 min if first infusion tolerated", finalConc:"~0.4–4 mg/mL",
+    precautions:["Monitor for infusion reactions (fever, chills, hypotension)","Cardiotoxicity risk – baseline and periodic LVEF assessment","Do not mix with D5W","Pre-medication for first infusion"] },
+  { id:"trastdm1", name:"Trastuzumab Emtansine (T-DM1/Kadcyla)", category:"chemo",
+    diluent:"D5W ONLY", volume:"250 mL",
+    stability:"24 h refrigerated; use within 4 h at room temp",
+    infusionRate:"First: 90 min; subsequent: 30 min if tolerated", finalConc:"~0.2–0.8 mg/mL",
+    precautions:["Do not substitute for trastuzumab","Do not shake vial during reconstitution","Hepatotoxicity and thrombocytopenia monitoring required","Non-PVC tubing recommended"] },
+  { id:"phesgo", name:"Phesgo (Pertuzumab + Trastuzumab)", category:"chemo",
+    diluent:"Subcutaneous injection – no IV dilution required", volume:"15 mL SC injection",
+    stability:"Single-use vial; administer immediately; store refrigerated (2–8 °C)",
+    infusionRate:"SC injection over ~5–8 min (not IV infusion)", finalConc:"Pertuzumab 60 mg/mL + Trastuzumab 120 mg/mL",
+    precautions:["SC route only – NOT for IV administration","Monitor for local injection-site reactions","Cardiac monitoring (same as trastuzumab)","Observe for at least 30 min after each injection"] },
+  { id:"bev", name:"Bevacizumab (Avastin)", category:"chemo",
+    diluent:"NS (0.9% NaCl) ONLY", volume:"100 mL",
+    stability:"8 h room temp; 5 days refrigerated after dilution",
+    infusionRate:"First: 90 min; second: 60 min; subsequent: 30 min", finalConc:"1.4–16.5 mg/mL",
+    precautions:["Do not shake vial","Risk of arterial thromboembolic events, GI perforation, wound healing impairment","Hold ≥28 days before/after major surgery","Monitor BP throughout therapy"] },
+  { id:"pan", name:"Panitumumab (Vectibix)", category:"chemo",
+    diluent:"NS (0.9% NaCl) ONLY", volume:"100 mL (doses ≤1000 mg)",
+    stability:"6 h room temp; 24 h refrigerated after dilution",
+    infusionRate:"60 min (doses ≤1000 mg); 90 min for higher", finalConc:"Final ≤10 mg/mL",
+    precautions:["Low-protein-binding 0.2 or 0.22 µm in-line filter required","Severe dermatologic toxicity (acneiform rash)","Hypomagnesemia – monitor and supplement Mg","KRAS/RAS wildtype only"] },
+  { id:"zol", name:"Zoledronic Acid (Zometa)", category:"chemo",
+    diluent:"NS or D5W", volume:"100 mL",
+    stability:"24 h room temp after dilution",
+    infusionRate:"≥15 min IV infusion (NEVER bolus)", finalConc:"~0.04 mg/mL in 100 mL",
+    precautions:["Renal toxicity – adjust dose for CrCl <60 mL/min","Do not administer in <15 min","Dental evaluation before initiation (osteonecrosis of jaw)","Adequate hydration before each dose"] },
+  { id:"flo", name:"Fluorouracil (5-FU)", category:"chemo",
+    diluent:"D5W or NS", volume:"50–1000 mL (protocol-dependent)",
+    stability:"72 h room temp; protect from light (prolonged exposure)",
+    infusionRate:"IV push (bolus) or continuous infusion 22–46 h", finalConc:"0.5–50 mg/mL (bolus); 0.5–12.4 mg/mL (continuous)",
+    precautions:["Protect from light for extended infusions","DPD enzyme deficiency – severe toxicity risk","Hand-foot syndrome with continuous infusion","Monitor CBC"] },
+  { id:"leu", name:"Calcium Leucovorin (Folinic Acid)", category:"chemo",
+    diluent:"NS or D5W", volume:"25–100 mL",
+    stability:"24 h room temp after dilution",
+    infusionRate:"15–30 min (rate ≤160 mg/min due to calcium content)", finalConc:"0.5–20 mg/mL",
+    precautions:["Do not mix with 5-FU in same bag (precipitate)","Rate ≤160 mg/min due to calcium content","Protect from light","Used as rescue after methotrexate and as modulator with 5-FU"] },
+  { id:"ifo", name:"Ifosfamide", category:"chemo",
+    diluent:"D5W, NS, or LR", volume:"50–3000 mL (protocol-dependent)",
+    stability:"1 week room temp; 3 weeks refrigerated",
+    infusionRate:"30 min to 24 h continuous infusion", finalConc:"6–20 mg/mL (max 60 mg/mL)",
+    precautions:["Mesna uroprotection mandatory (hemorrhagic cystitis)","CNS toxicity (encephalopathy) – monitor mental status","Ensure adequate hydration","Metabolic encephalopathy: methylene blue may be used"] },
+  { id:"eto", name:"Etoposide (VP-16)", category:"chemo",
+    diluent:"NS or D5W", volume:"250–500 mL",
+    stability:"96 h room temp at 0.2 mg/mL; 24 h at 0.4 mg/mL",
+    infusionRate:"60–120 min IV infusion (NEVER rapid infusion)", finalConc:"≤0.4 mg/mL",
+    precautions:["Hypotension with rapid infusion – infuse over ≥60 min","Do not exceed 0.4 mg/mL (precipitation)","Monitor BP during infusion","Secondary leukemia risk with prolonged use"] },
+  { id:"cet", name:"Cetuximab (Erbitux)", category:"chemo",
+    diluent:"NS (0.9% NaCl) ONLY", volume:"Infuse undiluted or transfer to NS bag",
+    stability:"12 h room temp; 24 h refrigerated",
+    infusionRate:"Loading 400 mg/m² over 120 min; weekly 250 mg/m² over 60 min", finalConc:"2 mg/mL (as supplied)",
+    precautions:["Premedicate: antihistamine H1 (e.g., diphenhydramine) before each dose","Severe infusion reactions – resuscitation equipment at bedside","Low-protein-binding 0.22 µm in-line filter required","Dermatologic toxicity: acneiform rash protocol"] },
+  { id:"inf", name:"Infliximab (Remicade)", category:"chemo",
+    diluent:"NS (0.9% NaCl) ONLY", volume:"250 mL",
+    stability:"3 h room temp after dilution",
+    infusionRate:"Minimum 2 h infusion", finalConc:"0.4–4 mg/mL",
+    precautions:["TB and hepatitis B screening mandatory before initiation","Infusion reaction monitoring: have resuscitation available","Do not freeze or shake vials","Gently swirl – do not shake after reconstitution"] },
+  { id:"pem", name:"Pemetrexed (Alimta)", category:"chemo",
+    diluent:"NS (0.9% NaCl) ONLY", volume:"100 mL",
+    stability:"24 h room temp or refrigerated after dilution",
+    infusionRate:"10 min IV infusion", finalConc:"~20 mg/mL after reconstitution",
+    precautions:["Premedicate: folic acid + vitamin B12 starting 1 week before","Dexamethasone 4 mg BID × 3 days (starting day before) to reduce rash","Renal dose adjustment (CrCl <45 mL/min: do not use)","Avoid NSAIDs 2 days before/after (short-acting) or 5 days (long-acting)"] },
+
+  // ── NORMAL IV ────────────────────────────────────────────────────────────────
+  { id:"mer1g", name:"Meropenem 1g", category:"normal",
+    diluent:"NS (0.9% NaCl) or D5W", volume:"50–100 mL",
+    stability:"4 h room temp in NS; 1 h in D5W; 24 h refrigerated in NS",
+    infusionRate:"15–30 min IV infusion (or 3-h extended infusion)", finalConc:"1–20 mg/mL",
+    precautions:["Renal dose adjustment required","Carbapenem-sparing strategy – confirm indication","May reduce valproate levels","Extended infusion preferred for resistant organisms"] },
+  { id:"mer2g", name:"Meropenem 2g", category:"normal",
+    diluent:"NS (0.9% NaCl) or D5W", volume:"100–250 mL",
+    stability:"4 h room temp in NS; 24 h refrigerated in NS",
+    infusionRate:"15–30 min or extended 3-h infusion", finalConc:"2–20 mg/mL",
+    precautions:["High-dose regimen for CNS/severe infections or resistant organisms","Monitor renal function closely","Extended-infusion strategy recommended","Incompatible with most drugs – flush line before/after"] },
+  { id:"cefot1g", name:"Cefotaxime 1g", category:"normal",
+    diluent:"NS, D5W, or sterile water for injection", volume:"50–100 mL",
+    stability:"12–24 h room temp; 5–10 days refrigerated",
+    infusionRate:"20–30 min IV infusion", finalConc:"10–40 mg/mL",
+    precautions:["Cross-allergy with penicillins (rare, ~1–2%)","Monitor renal function with prolonged use","Discard if solution turns yellow-orange"] },
+  { id:"cefot2g", name:"Cefotaxime 2g", category:"normal",
+    diluent:"NS or D5W", volume:"50–100 mL",
+    stability:"12–24 h room temp; 5 days refrigerated",
+    infusionRate:"20–30 min IV infusion", finalConc:"20–40 mg/mL",
+    precautions:["High-dose for meningitis or severe infections","Monitor for neurotoxicity at high doses in renal impairment","Discard if precipitate forms"] },
+  { id:"ceftri1g", name:"Ceftriaxone 1g", category:"normal",
+    diluent:"NS (preferred) or D5W – do NOT use calcium-containing solutions", volume:"50–100 mL",
+    stability:"10 days refrigerated; 3 days room temp in NS",
+    infusionRate:"30 min IV infusion", finalConc:"10–40 mg/mL",
+    precautions:["NEVER mix with calcium-containing solutions (fatal precipitate in neonates)","Biliary sludging with prolonged use","Once-daily dosing advantage","Incompatible with aminoglycosides – separate administration"] },
+  { id:"ceftri2g", name:"Ceftriaxone 2g", category:"normal",
+    diluent:"NS ONLY for IV", volume:"50–100 mL",
+    stability:"10 days refrigerated in NS",
+    infusionRate:"30 min IV infusion", finalConc:"20–40 mg/mL",
+    precautions:["NEVER co-administer with calcium IV (including in same line)","Monitor LFTs with prolonged use"] },
+  { id:"cagluc", name:"Calcium Gluconate 1g", category:"normal",
+    diluent:"D5W or NS", volume:"50–100 mL",
+    stability:"24 h room temp after dilution",
+    infusionRate:"100–200 mg/min for hypocalcemia; maintenance slower", finalConc:"Peripheral: ≤10 mg/mL; Central: up to 100 mg/mL",
+    precautions:["Peripheral administration: max 10 mg/mL to avoid phlebitis","Do NOT give via peripheral line if >10 mg/mL","Extravasation causes tissue necrosis","ECG monitoring if rapid infusion for cardiac arrest"] },
+  { id:"mgsulf", name:"Magnesium Sulfate 1g", category:"normal",
+    diluent:"D5W or NS", volume:"50–100 mL",
+    stability:"28 days room temp; stable in most IV solutions",
+    infusionRate:"Seizure prophylaxis ≤150 mg/min; routine: 1 g over 30–60 min", finalConc:"≤200 mg/mL (20%) for peripheral",
+    precautions:["Monitor deep tendon reflexes, respiratory rate, and serum Mg","Antidote: calcium gluconate 1 g IV for toxicity","Reduce rate in renal impairment","Neonatal/obstetric use: strict monitoring"] },
+  { id:"tei", name:"Teicoplanin (Targocid)", category:"normal",
+    diluent:"NS, D5W, or LR", volume:"50–100 mL",
+    stability:"24 h room temp; 48 h refrigerated after reconstitution",
+    infusionRate:"30 min IV infusion", finalConc:"~2–10 mg/mL",
+    precautions:["Reconstitute gently – roll vial, do not shake (foam)","TDM recommended: trough 15–30 mg/L for serious infections","Renal dose adjustment for CrCl <50 mL/min","Cross-reactivity with vancomycin"] },
+  { id:"ksulf", name:"Potassium (KCl/Potassium Sulfate)", category:"normal",
+    diluent:"NS or D5W (never undiluted)", volume:"100–1000 mL",
+    stability:"Stable 24 h in standard IV fluids",
+    infusionRate:"Peripheral: max 10 mEq/h; Central: up to 20–40 mEq/h with monitoring", finalConc:"Peripheral: ≤40 mEq/L; Central: up to 80 mEq/L",
+    precautions:["NEVER give IV push or undiluted – cardiac arrest risk","Peripheral max 40 mEq/L to avoid phlebitis/pain","ECG monitoring for rapid infusion","Concentrated vials must not be stored on general wards"] },
+  { id:"lev", name:"Levetiracetam (Keppra)", category:"normal",
+    diluent:"NS, D5W, or LR", volume:"100 mL",
+    stability:"24 h room temp after dilution",
+    infusionRate:"15 min IV infusion", finalConc:"15 mg/mL (max)",
+    precautions:["Renal dose adjustment (reduce dose if CrCl <80 mL/min)","Behavioral/psychiatric adverse effects","Compatible with most common IV drugs","Antiepileptic – do not abruptly discontinue"] },
+  { id:"dex", name:"Dexamethasone", category:"normal",
+    diluent:"NS or D5W", volume:"25–100 mL",
+    stability:"24 h room temp after dilution",
+    infusionRate:"IV push over 1–5 min; infusion over 15–30 min", finalConc:"0.5–4 mg/mL",
+    precautions:["Benzyl alcohol formulations: avoid in neonates","Hyperglycemia monitoring","Adrenal suppression with prolonged use – taper on discontinuation","Antimicrobial prophylaxis for prolonged high-dose use"] },
+  { id:"ket", name:"Ketorolac (Toradol)", category:"normal",
+    diluent:"NS, D5W, LR, or sterile water for injection", volume:"Slow IV push or 15–30 mL",
+    stability:"24 h room temp after dilution",
+    infusionRate:"IV push over minimum 15 seconds; infusion over 15 min", finalConc:"15–60 mg/mL (as supplied 30 mg/mL)",
+    precautions:["Limit to ≤5 days total (IV + oral combined)","Avoid in renal impairment, peptic ulcer, and perioperative CABG","Max 60 mg/day IV; 30 mg/day in elderly or renal impairment","NSAIDs: GI and cardiovascular risk"] },
+  { id:"fur", name:"Furosemide (Lasix)", category:"normal",
+    diluent:"NS; may give undiluted", volume:"50–100 mL for infusion",
+    stability:"24 h room temp; discard if yellow-brown",
+    infusionRate:"IV push: ≤4 mg/min; continuous infusion widely used", finalConc:"1–10 mg/mL",
+    precautions:["Protect from light (light-sensitive)","Do not exceed 4 mg/min (ototoxicity)","Monitor electrolytes (K, Mg, Na)","Alkaline solution – incompatible with acidic drugs"] },
+  { id:"cefep1g", name:"Cefepime 1g", category:"normal",
+    diluent:"NS, D5W, or sterile water", volume:"50–100 mL",
+    stability:"24 h room temp; 7 days refrigerated",
+    infusionRate:"30 min IV infusion", finalConc:"4–40 mg/mL (max 40 mg/mL)",
+    precautions:["Neurotoxicity risk – especially with renal impairment","Renal dose adjustment required","Monitor for encephalopathy and non-convulsive status epilepticus","Broad-spectrum – stewardship review"] },
+  { id:"cefep2g", name:"Cefepime 2g", category:"normal",
+    diluent:"NS or D5W", volume:"50–100 mL",
+    stability:"24 h room temp; 7 days refrigerated",
+    infusionRate:"30 min or extended 3-h infusion for PK/PD optimization", finalConc:"20–40 mg/mL",
+    precautions:["Higher neurotoxicity risk at 2g dose in renal impairment","Extended infusion improves time above MIC for resistant organisms","Strict renal monitoring"] },
+  { id:"tig", name:"Tigecycline (Tygacil)", category:"normal",
+    diluent:"NS or D5W", volume:"100 mL",
+    stability:"6 h room temp; 24 h refrigerated after dilution",
+    infusionRate:"30–60 min IV infusion", finalConc:"1 mg/mL",
+    precautions:["Protect from light","Nausea/vomiting – premedicate with antiemetic","Associated with increased all-cause mortality vs comparators (black box warning)","Reserved for resistant organisms"] },
+  { id:"clin600", name:"Clindamycin 600 mg", category:"normal",
+    diluent:"NS or D5W", volume:"50–100 mL",
+    stability:"16 days room temp; 32 days refrigerated in NS",
+    infusionRate:"20–30 min infusion (NEVER IV push – cardiac arrest risk)", finalConc:"6–12 mg/mL (max 18 mg/mL)",
+    precautions:["Never give IV push or bolus – cardiovascular toxicity","Clostridium difficile-associated diarrhea risk","Max rate 30 mg/min","Monitor for pseudomembranous colitis"] },
+  { id:"clin300", name:"Clindamycin 300 mg", category:"normal",
+    diluent:"NS or D5W", volume:"50 mL",
+    stability:"16 days room temp; 32 days refrigerated",
+    infusionRate:"10–20 min infusion", finalConc:"6 mg/mL in 50 mL",
+    precautions:["Never give as rapid infusion or IV push","Monitor for GI side effects","Anaerobic and gram-positive coverage"] },
+  { id:"col", name:"Colistin (Colistimethate Sodium)", category:"normal",
+    diluent:"NS ONLY for IV use", volume:"50–100 mL",
+    stability:"Diluted: use within 24 h refrigerated; prepare fresh",
+    infusionRate:"30–60 min infusion; loading dose over 1–2 h", finalConc:"1–4 mg/mL (colistin base activity)",
+    precautions:["Nephrotoxicity and neurotoxicity – strict renal monitoring","Dosing in CBA (Colistin Base Activity) – verify unit system","Loading dose recommended for serious infections","Last-resort antibiotic – ID consultation required","Do not use D5W for IV preparation"] },
+  { id:"levo500", name:"Levofloxacin 500 mg", category:"normal",
+    diluent:"NS, D5W, or compatible IV solution (premixed available)", volume:"100 mL",
+    stability:"72 h room temp; 14 days refrigerated",
+    infusionRate:"60 min infusion (NEVER rapid infusion)", finalConc:"5 mg/mL",
+    precautions:["Infuse over ≥60 min – rapid infusion causes hypotension","QTc prolongation – check baseline ECG and drug interactions","Tendinopathy/tendon rupture risk","Avoid in patients with epilepsy or CNS disorders"] },
+  { id:"levo750", name:"Levofloxacin 750 mg", category:"normal",
+    diluent:"NS or D5W", volume:"150 mL",
+    stability:"72 h room temp; 14 days refrigerated",
+    infusionRate:"90 min infusion", finalConc:"5 mg/mL",
+    precautions:["Extended 750 mg regimen allows shorter course (5 vs 10 days for CAP)","QTc monitoring mandatory","Once-daily dosing due to concentration-dependent killing"] },
+  { id:"flu100", name:"Fluconazole 100 mg", category:"normal",
+    diluent:"Premixed in NS or D5W (2 mg/mL)", volume:"50 mL",
+    stability:"72 h room temp (premixed)",
+    infusionRate:"30 min infusion (max rate 200 mg/h)", finalConc:"2 mg/mL (premixed; do not dilute further)",
+    precautions:["Multiple CYP450 drug interactions (warfarin, statins, phenytoin)","QTc prolongation","Hepatotoxicity – monitor LFTs","Candida krusei and some C. glabrata are intrinsically resistant"] },
+  { id:"flu50", name:"Fluconazole 50 mg", category:"normal",
+    diluent:"Premixed in NS or D5W (2 mg/mL)", volume:"25 mL",
+    stability:"72 h room temp (premixed)",
+    infusionRate:"15–30 min infusion", finalConc:"2 mg/mL",
+    precautions:["Prophylactic dosing in immunocompromised patients","Same drug interaction profile as higher doses","Oral bioavailability 90% – IV to PO switch as soon as possible"] },
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+var currentFilter = "all";
+var currentQuery = "";
+var expandedCards = {};
+
+// ── FILTER & SEARCH ──────────────────────────────────────────────────────────
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrid();
+}
+function handleSearch(v) {
+  currentQuery = v.trim().toLowerCase();
+  document.getElementById('clearSearch').style.display = v ? 'block' : 'none';
+  renderGrid();
+}
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  handleSearch('');
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function renderStats() {
+  var chemo = DRUGS.filter(d => d.category === 'chemo').length;
+  var normal = DRUGS.filter(d => d.category === 'normal').length;
+  document.getElementById('statsBar').innerHTML = `
+    <div class="stat-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#7a8fa8" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <div><div class="stat-val">${DRUGS.length}</div><div class="stat-lbl">Total Drugs</div></div>
+    </div>
+    <div class="stat-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fb7185" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <div><div class="stat-val" style="color:#fb7185">${chemo}</div><div class="stat-lbl">Chemotherapy</div></div>
+    </div>
+    <div class="stat-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <div><div class="stat-val" style="color:#38bdf8">${normal}</div><div class="stat-lbl">IV (Normal)</div></div>
+    </div>`;
+}
+
+function renderGrid() {
+  var sort = document.getElementById('sortSelect').value;
+  var list = DRUGS.filter(d => {
+    if (currentFilter !== 'all' && d.category !== currentFilter) return false;
+    if (currentQuery) {
+      return d.name.toLowerCase().includes(currentQuery) ||
+             d.diluent.toLowerCase().includes(currentQuery) ||
+             (d.precautions || []).some(p => p.toLowerCase().includes(currentQuery));
+    }
+    return true;
+  }).sort((a, b) => {
+    if (sort === 'category') return a.category.localeCompare(b.category) || a.name.localeCompare(b.name);
+    return a.name.localeCompare(b.name);
+  });
+
+  var grid = document.getElementById('drugGrid');
+  var empty = document.getElementById('emptyState');
+  var rc = document.getElementById('resultCount');
+
+  if (list.length === 0) {
+    grid.innerHTML = '';
+    grid.style.display = 'none';
+    empty.style.display = 'flex';
+    rc.textContent = '';
+  } else {
+    empty.style.display = 'none';
+    grid.style.display = 'grid';
+    rc.textContent = list.length + ' result' + (list.length !== 1 ? 's' : '');
+    grid.innerHTML = list.map(d => cardHTML(d)).join('');
+  }
+  renderStats();
+}
+
+function cardHTML(d) {
+  var isChemo = d.category === 'chemo';
+  var open = expandedCards[d.id];
+  var detailsHtml = '';
+  if (open) {
+    var fields = [
+      { key:'stability', label:'Stability', color:'#fbbf24', icon:'<path d="M12 2v10l4 2"/><circle cx="12" cy="12" r="10"/>' },
+      { key:'infusionRate', label:'Infusion Rate', color:'#34d399', icon:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>' },
+      { key:'finalConc', label:'Final Concentration', color:'#2dd4bf', icon:'<path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/>' },
+    ];
+    var fieldsHtml = fields.map(f => `
+      <div class="detail-row">
+        <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="${f.color}" stroke-width="2">${f.icon}</svg>
+        <div><div class="detail-label">${f.label}</div><div class="detail-val">${d[f.key]}</div></div>
+      </div>`).join('');
+    var precHtml = (d.precautions && d.precautions.length) ? `
+      <div class="prec-box">
+        <div class="prec-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Precautions & Special Handling</div>
+        <ul class="prec-list">${d.precautions.map(p => `<li><span class="prec-dot"></span>${p}</li>`).join('')}</ul>
+      </div>` : '';
+    detailsHtml = `<div class="card-details open">${fieldsHtml}${precHtml}</div>`;
+  }
+  return `
+  <div class="drug-card ${d.category}" id="card-${d.id}">
+    <div class="card-header">
+      <div class="card-icon">
+        ${isChemo
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="#fb7185" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>'
+          : '<svg viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>'}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="card-title">${d.name}</div>
+        <span class="card-badge">${isChemo ? 'Chemotherapy' : 'IV Drug'}</span>
+      </div>
+      <div class="card-actions">
+        <button class="icon-btn edit-btn" onclick="openModal('${d.id}')" title="Edit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="icon-btn del-btn" onclick="deleteDrug('${d.id}')" title="Delete">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="quick-info">
+      <div class="qi-box"><div class="qi-label">Diluent</div><div class="qi-val">${d.diluent}</div></div>
+      <div class="qi-box"><div class="qi-label">Volume</div><div class="qi-val">${d.volume}</div></div>
+    </div>
+    <button class="expand-btn" onclick="toggleCard('${d.id}')">
+      ${open ? 'Hide Details' : 'View Full Protocol'}
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+        ${open ? '<polyline points="18 15 12 9 6 15"/>' : '<polyline points="6 9 12 15 18 9"/>'}
+      </svg>
+    </button>
+    ${detailsHtml}
+  </div>`;
+}
+
+function toggleCard(id) {
+  expandedCards[id] = !expandedCards[id];
+  renderGrid();
+  // Scroll card into view smoothly on mobile
+  setTimeout(() => {
+    var el = document.getElementById('card-' + id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 50);
+}
+
+// ── DELETE ────────────────────────────────────────────────────────────────────
+function deleteDrug(id) {
+  if (confirm('Delete this drug entry?')) {
+    DRUGS = DRUGS.filter(d => d.id !== id);
+    delete expandedCards[id];
+    renderGrid();
+  }
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────────────────
+function openModal(id) {
+  var d = id ? DRUGS.find(x => x.id === id) : null;
+  document.getElementById('modalTitle').textContent = d ? 'Edit Drug' : 'Add New Drug';
+  document.getElementById('editId').value = d ? d.id : '';
+  document.getElementById('fName').value = d ? d.name : '';
+  document.getElementById('fCategory').value = d ? d.category : 'normal';
+  document.getElementById('fDiluent').value = d ? d.diluent : '';
+  document.getElementById('fVolume').value = d ? d.volume : '';
+  document.getElementById('fStability').value = d ? d.stability : '';
+  document.getElementById('fInfusionRate').value = d ? d.infusionRate : '';
+  document.getElementById('fFinalConc').value = d ? d.finalConc : '';
+  // Precautions
+  var list = document.getElementById('precList');
+  list.innerHTML = '';
+  var precs = d ? d.precautions : [''];
+  precs.forEach(p => addPrecRow(p));
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+function addPrecRow(val) {
+  var div = document.createElement('div');
+  div.className = 'prec-row';
+  div.innerHTML = `
+    <input type="text" class="form-input prec-input" value="${val.replace(/"/g,'&quot;')}" placeholder="Add precaution…" />
+    <button class="prec-remove" onclick="this.parentNode.remove()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+    </button>`;
+  document.getElementById('precList').appendChild(div);
+}
+
+function saveDrug() {
+  var name = document.getElementById('fName').value.trim();
+  if (!name) { document.getElementById('fName').focus(); return; }
+  var editId = document.getElementById('editId').value;
+  var precs = Array.from(document.querySelectorAll('#precList .prec-input'))
+    .map(i => i.value.trim()).filter(Boolean);
+  var drug = {
+    id: editId || (name.toLowerCase().replace(/\s+/g,'_') + '_' + Date.now()),
+    name: name,
+    category: document.getElementById('fCategory').value,
+    diluent: document.getElementById('fDiluent').value.trim(),
+    volume: document.getElementById('fVolume').value.trim(),
+    stability: document.getElementById('fStability').value.trim(),
+    infusionRate: document.getElementById('fInfusionRate').value.trim(),
+    finalConc: document.getElementById('fFinalConc').value.trim(),
+    precautions: precs
+  };
+  if (editId) {
+    var idx = DRUGS.findIndex(d => d.id === editId);
+    if (idx !== -1) DRUGS[idx] = drug;
+  } else {
+    DRUGS.push(drug);
+  }
+  closeModal();
+  renderGrid();
+}
+
+// Close modal on overlay click
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderGrid();
+</script>
+</body>
+</html>
